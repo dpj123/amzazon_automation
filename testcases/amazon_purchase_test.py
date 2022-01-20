@@ -27,4 +27,4 @@ class TestLogIn(softest.TestCase):
         self.home.category_drop_down_selection("Baby")
         self.home.iterm_search("Apple iPhone 11 (256GB) - Green")
         self.home.searched_items_selected("Apple iPhone 11 (256GB) - Green")
-        self.home.delivery_address("arun", "7025567614", "686503", "parambil", "Kottayam", "KERALA")
+        self.home.delivery_address("Dhanush S", "7025567614", "686503", "Parambil,Moozhoor, Kottayam", "Kottayam")

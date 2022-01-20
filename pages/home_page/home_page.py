@@ -22,17 +22,17 @@ class HomePage(BaseDriver):
     SEARCH_ITEM_LIST = "//div[@class='sg-col-inner']/div/div/h2/a"
     ADD_TO_CART = "add-to-cart-button"
     PROCEED_TO_CHECKOUT_BUTTON = "attach-sidesheet-checkout-button"
+    COUNTRY = "address-ui-widgets-countryCode-dropdown-nativeId"
     FULL_NAME = "address-ui-widgets-enterAddressFullName"
     MOBILE_NO = "address-ui-widgets-enterAddressPhoneNumber"
     PIN_CODE = "address-ui-widgets-enterAddressPostalCode"
     HOUSE_NAME = "address-ui-widgets-enterAddressLine1"
     TOWN = "address-ui-widgets-enterAddressCity"
-    STATE = "address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId"
+    STATE = "//*[@id='address-ui-widgets-enterAddressStateOrRegion-dropdown-nativeId']"
     STATE_LIST = "(//div[@id='a-popover-2'])/div/div/ul/li"
     SUBMIT = "address-ui-widgets-form-submit-button"
     DELIVER_TO_ADDRESS = "a-button-inner"
-
-    # SEARCH_ITEM_LIST = "//div[@class='s-main-slot s-result-list s-search-results sg-row']/div/div"
+    PAYMENT = "pp-LV7MzC-83"
 
     def sign_in(self):
         return self.wait_element_is_clickable(By.ID, self.SIGN_IN)
@@ -61,7 +61,6 @@ class HomePage(BaseDriver):
 
     def proceed_to_check_out(self):
         return self.wait_element_is_clickable(By.ID, self.PROCEED_TO_CHECKOUT_BUTTON)
-        # return self.driver.find_element(By.ID, self.PROCEED_TO_CHECKOUT_BUTTON)
 
     def full_name(self):
         return self.driver.find_element(By.ID, self.FULL_NAME)
@@ -79,17 +78,24 @@ class HomePage(BaseDriver):
         return self.driver.find_element(By.ID, self.TOWN)
 
     def state(self):
-        state_locator = self.driver.find_element(By.ID, self.STATE)
+        state_locator = self.driver.find_element(By.XPATH, self.STATE)
         return self.select_drop_down_value(state_locator)
 
     def state_list(self):
         return self.driver.find_elements(By.XPATH, self.STATE_LIST)
 
     def submit_button(self):
-        return self.driver.find_element(By.ID, self.SUBMIT)
+        return self.wait_element_is_clickable(By.ID, self.SUBMIT)
 
     def deliver_to_this_address(self):
         return self.driver.find_element(By.CLASS_NAME, self.DELIVER_TO_ADDRESS)
+
+    def country(self):
+        country_locator = self.driver.find_element(By.ID, self.STATE)
+        return self.select_drop_down_value(country_locator)
+
+    def payment(self):
+        return self.wait_element_is_clickable(By.ID, self.PAYMENT)
 
     def iterm_search(self, item):
         self.search_items().send_keys(item)
@@ -112,18 +118,11 @@ class HomePage(BaseDriver):
         self.add_into_cart().click()
         self.proceed_to_check_out().click()
 
-    def delivery_address(self, name, mobile, pin, house, town, selected_state):
-        if self.deliver_to_this_address().is_displayed():
-            self.deliver_to_this_address().click()
-            time.sleep(5)
-        else:
-            self.full_name().send_keys(name)
-            self.mobile_no().send_keys(mobile)
-            self.pin_code().send_keys(pin)
-            self.house_name().send_keys(house)
-            self.town().send_keys(town)
-            select = self.state()
-            lists = self.state_list()
-            selected_item = self.utiles.custom_drop_down_selection(lists, selected_state)
-            select.select_by_visible_text(selected_item)
-            self.submit_button().click()
+    def delivery_address(self, name, mobile, pin, house, town):
+        self.full_name().send_keys(name)
+        self.mobile_no().send_keys(mobile)
+        self.pin_code().send_keys(pin)
+        self.house_name().send_keys(house)
+        self.town().send_keys(town)
+        self.submit_button().click()
+        time.sleep(5)
