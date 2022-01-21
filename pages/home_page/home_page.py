@@ -33,6 +33,7 @@ class HomePage(BaseDriver):
     SUBMIT = "address-ui-widgets-form-submit-button"
     DELIVER_TO_ADDRESS = "a-button-inner"
     PAYMENT = "pp-LV7MzC-83"
+    SIGN_OUT = "nav-item-signout"
 
     def sign_in(self):
         return self.wait_element_is_clickable(By.ID, self.SIGN_IN)
@@ -97,6 +98,11 @@ class HomePage(BaseDriver):
     def payment(self):
         return self.wait_element_is_clickable(By.ID, self.PAYMENT)
 
+    def sign_out(self):
+        self.action_chain(self.sign_in()).perform()
+        return self.driver.find_element(By.ID, self.SIGN_OUT).click()
+
+
     def iterm_search(self, item):
         self.search_items().send_keys(item)
         self.click_on_search_button().click()
@@ -126,3 +132,7 @@ class HomePage(BaseDriver):
         self.town().send_keys(town)
         self.submit_button().click()
         time.sleep(5)
+        current_window = self.driver.current_window_handle
+        child_windows = self.driver.window_handles
+        window = self.utiles.window_handle(current_window, child_windows)
+        self.driver.switch_to.window(window)
